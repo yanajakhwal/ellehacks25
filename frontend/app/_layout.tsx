@@ -28,36 +28,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ThemeProvider>
   );
 }
-
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-// import React from 'react';
-
-// const RootLayout = () => {
-//   return (
-//     <View style={styles.container} >
-//       <text>BOMBOCLATT!!!!</text>
-//       {/* <StatusBar style="auto" /> */}
-//     </View>
-//   )
-// }
-
-// export default RootLayout;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     display: 'flex',
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center'
-//   }
-// })
