@@ -1,11 +1,23 @@
 import { Image, StyleSheet, Platform } from 'react-native';
-
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { API_URL } from '@/config';
+
+console.log("API URL:", API_URL);
 
 export default function HomeScreen() {
+  const [apiMessage, setApiMessage] = useState('');
+
+  useEffect(() => {
+    axios.get(`${API_URL}/`)
+      .then(response => setApiMessage(response.data.message))
+      .catch(error => console.error("Error fetching data:", error));
+  }, []);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -16,7 +28,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <ThemedText type="title">{apiMessage}</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
