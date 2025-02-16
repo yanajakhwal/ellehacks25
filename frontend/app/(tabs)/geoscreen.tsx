@@ -4,6 +4,7 @@ import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from 'axios';
 import { API_URL } from '@/config';
+import express from 'express';
 
 
 const GeofenceScreen = () => {
@@ -94,6 +95,7 @@ const GeofenceScreen = () => {
       */
     }
   };
+
 
   return (
     <View style={styles.container}>

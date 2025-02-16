@@ -9,34 +9,34 @@ auth_token = '5cda0eb1b7a3348d82935d941f3f0e32'
 client = Client(account_sid, auth_token)
 
 
+#verification code 
 verification = client.verify \
     .v2 \
     .services('VAea5cf22f2a59e8d369b782f3557f8789') \
     .verifications \
     .create(to='+16476796931', channel='sms')
-
-
 print(verification.sid)
 
 
+#verification check 
 verification_check = client.verify.v2.services(
     "VAea5cf22f2a59e8d369b782f3557f8789"
 ).verification_checks.create(to="+16476796931", code="123456")
-
-
 print(verification_check.status)
 
 
-#range
+
+#range - based off api endpoints 
 # Find your Account SID and Auth Token at twilio.com/console
 # and set the environment variables. See http://twil.io/secure
-
-
-message = client.messages.create(
+if isRange == False:
+    message = client.messages.create(
     body="Patient is out of range",
     from_="+12893019431",
     to="+16476796931",
 )
-
-
 print(message.body)
+
+
+
+
