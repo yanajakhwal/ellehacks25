@@ -85,18 +85,17 @@ const ClaraChatScreen: React.FC = () => {
       duration: 200,
       useNativeDriver: true,
     });
-
+  
     const fadeInAnimation = Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 200,
       useNativeDriver: true,
     });
-
+  
     fadeOutAnimation.start(() => {
       let response: string;
       switch (optionId) {
         case 'patient':
-        case 'caregiver':
           response = 'What can I help you with today?';
           setMessages(prevMessages => [
             ...prevMessages,
@@ -110,7 +109,11 @@ const ClaraChatScreen: React.FC = () => {
             ]),
           ]);
           break;
-
+  
+        case 'caregiver':
+          router.push('/login'); // Navigate to the login screen
+          break;
+  
         case 'back':
           setMessages(prevMessages => [
             ...prevMessages,
@@ -121,23 +124,23 @@ const ClaraChatScreen: React.FC = () => {
             ]),
           ]);
           break;
-
+  
         case 'location':
           router.push('/geoscreen'); // Route to geoscreen.tsx
           break;
-
+  
         case 'family':
           router.push('/Family'); // Route to family.tsx
           break;
-
+  
         case 'emergency':
           router.push('/contacts'); // Route to contact.tsx
           break;
-
+  
         case 'assistance':
           router.push('/chatbot'); // Route to chatbot.tsx
           break;
-
+  
         default:
           response = 'How else can I help you?';
           setMessages(prevMessages => [
