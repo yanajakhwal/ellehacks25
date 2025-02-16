@@ -1,86 +1,115 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { Image, StyleSheet, Text, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { MaterialIcons } from '@expo/vector-icons';
 import { API_URL } from '@/config';
-
-console.log("API URL:", API_URL);
+import { useNavigation } from 'expo-router';
 
 export default function HomeScreen() {
   const [apiMessage, setApiMessage] = useState('');
+  const navigation = useNavigation(); // ✅ Call the hook correctly
 
   useEffect(() => {
-    axios.get(`${API_URL}/`)
-      .then(response => setApiMessage(response.data.message))
-      .catch(error => console.error("Error fetching data:", error));
+    navigation.setOptions({
+      headerShown: false, // ✅ Correct usage of setOptions
+    });
+  }, [navigation]); // ✅ Dependency is navigation, not useNavigation
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/`)
+      .then((response) => setApiMessage(response.data.message))
+      .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">{apiMessage}</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ThemedView style={styles.welcome}>
+      {/* Voice Button */}
+      <TouchableOpacity style={styles.voiceButton}>
+        <MaterialIcons name="volume-up" style={styles.voiceIcon} />
+      </TouchableOpacity>
+
+      {/* Centered Title */}
+      <ThemedText style={styles.title}>Hello Patient</ThemedText>
+
+      {/* Centered Logo */}
+      <Image source={require('@/assets/images/clara-logo.png')} style={styles.logo} />
+
+      {/* Centered Button */}
+      <TouchableOpacity style={styles.button} onPress={() => alert('Button Pressed!')}>
+        <Text style={styles.buttonText}>Get Started With Clara</Text>
+      </TouchableOpacity>
+    </ThemedView>
   );
 }
 
+// ✅ Calculate dimensions outside StyleSheet.create()
+const { width, height } = Dimensions.get('window');
+
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  welcome: {
+    flex: 1,
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'center',
+    minHeight: height, // Ensure full height
+    overflow: 'hidden',
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontFamily: 'Poppins',
+    fontSize: width * 0.1, // 10% of screen width
+    fontWeight: '700',
+    color: '#8EACCD',
+    textAlign: 'center',
+    paddingTop: 40,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  logo: {
+    width: width * 0.6, // 60% of screen width
+    height: width * 0.6, // Maintain aspect ratio
+    resizeMode: 'contain',
+  },
+  button: {
+    width: 'auto', // Allows button to size based on content
+    minWidth: width * 0.5, // Ensures a minimum size
+    height: height * 0.07, // 7% of screen height
+    backgroundColor: '#8EACCD',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20, // ✅ Adds space on left & right of text
+    paddingVertical: 12, // ✅ Adds space on top & bottom
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  buttonText: {
+    fontSize: width * 0.05,
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    shadowOffset: { width: 0, height: 2 },
+  },
+  voiceButton: {
     position: 'absolute',
+    top: Platform.OS === 'ios' ? height * 0.05 : height * 0.04, // Adjust based on platform
+    right: width * 0.05, // 5% from the right
+    width: width * 0.13, // 13% of screen width
+    height: width * 0.13, // Keep it circular
+    backgroundColor: '#8EACCD',
+    borderRadius: width * 0.065, // Half of width to keep it circular
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  voiceIcon: {
+    fontSize: width * 0.08, // Scale icon size dynamically
+    color: '#FFFFFF',
   },
 });
