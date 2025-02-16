@@ -4,7 +4,6 @@ import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from 'axios';
 import { API_URL } from '@/config';
-import express from 'express';
 
 
 const GeofenceScreen = () => {
@@ -35,7 +34,7 @@ const GeofenceScreen = () => {
       }
 
       await Location.watchPositionAsync(
-        { accuracy: Location.Accuracy.High, timeInterval: 1000, distanceInterval: 1 },
+        { accuracy: Location.Accuracy.High, timeInterval: 10800000, distanceInterval: 100 },
         (locationData) => {
           if (
             previousLocation === null ||
@@ -80,19 +79,18 @@ const GeofenceScreen = () => {
       const isInRange = distance < geofence.radius;
       setStatus(isInRange ? "Inside Geofence" : "Outside Geofence");
       setInRange(isInRange);
-/*
-      axios.post(`${API_URL}/geofence`, {
-        inRange: isInRange,
-        location: userLocation
-      })
-      .then(response => {
-        console.log('Status sent to backend:', response.data);
-      })
-      
-      .catch(error => {
-        console.error('Error sending status to backend:', error);
-      });
-      */
+
+      // Replace the commented-out section with this:
+axios.post(`${API_URL}/geofence`, {
+  inRange: isInRange,
+  location: userLocation
+})
+.then(response => {
+  console.log('Status sent to backend:', response.data);
+})
+.catch(error => {
+  console.error('Error sending status to backend:', error);
+});
     }
   };
 
