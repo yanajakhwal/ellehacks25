@@ -22,3 +22,14 @@ verification_check = client.verify.v2.services(
 ).verification_checks.create(to="+16476796931", code="123456")
 
 print(verification_check.status)
+
+
+#range 
+# Find your Account SID and Auth Token at twilio.com/console
+# and set the environment variables. See http://twil.io/secure
+message = client.messages.create(
+    body="Patient is out of range",
+    from_="+12893019431",
+    to="+16476796931",
+)
+print(message.body)
