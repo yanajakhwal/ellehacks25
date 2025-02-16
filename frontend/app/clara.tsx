@@ -102,7 +102,7 @@ const ClaraChatScreen: React.FC = () => {
             ...prevMessages,
             createUserMessage(optionText),
             createBotMessage(response, [
-              { id: 'identity', text: 'Who am I?' },
+              { id: 'location', text: 'Where am I?' },
               { id: 'family', text: 'Who is my family?' },
               { id: 'emergency', text: 'Emergency Contacts' },
               { id: 'assistance', text: 'General Assistance' },
@@ -122,13 +122,29 @@ const ClaraChatScreen: React.FC = () => {
           ]);
           break;
 
+        case 'location':
+          router.push('/geoscreen'); // Route to geoscreen.tsx
+          break;
+
+        case 'family':
+          router.push('/Family'); // Route to family.tsx
+          break;
+
+        case 'emergency':
+          router.push('/contacts'); // Route to contact.tsx
+          break;
+
+        case 'assistance':
+          router.push('/chatbot'); // Route to chatbot.tsx
+          break;
+
         default:
           response = 'How else can I help you?';
           setMessages(prevMessages => [
             ...prevMessages,
             createUserMessage(optionText),
             createBotMessage(response, [
-              { id: 'identity', text: 'Who am I?' },
+              { id: 'location', text: 'Where am I?' },
               { id: 'family', text: 'Who is my family?' },
               { id: 'emergency', text: 'Emergency Contacts' },
               { id: 'assistance', text: 'General Assistance' },
@@ -139,7 +155,7 @@ const ClaraChatScreen: React.FC = () => {
       }
       fadeInAnimation.start();
     });
-  }, [fadeAnim]);
+  }, [fadeAnim, router]);
 
   const renderBubble = (props: any) => {
     const isBatchDisabled = disabledBatchId === props.currentMessage._id;

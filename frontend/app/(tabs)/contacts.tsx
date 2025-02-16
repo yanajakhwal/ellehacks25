@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, Platform, Animated } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const emergencyContacts = [
@@ -10,7 +10,7 @@ const emergencyContacts = [
 ];
 
 const Contacts = () => {
-  const handleCall = (phoneNumber: string) => {
+  const handleCall = (phoneNumber: any) => {
     let phoneUrl = Platform.OS === "ios" ? `telprompt:${phoneNumber}` : `tel:${phoneNumber}`;
     Linking.canOpenURL(phoneUrl)
       .then((supported) => {
@@ -21,15 +21,17 @@ const Contacts = () => {
       .catch((err) => console.error("Error making phone call:", err));
   };
 
-  const renderContact = ({ item }: { item: { id: string; name: string; phone: string } }) => (
-    <View style={styles.contactItem}>
-      <Text style={styles.contactName}>{item.name}</Text>
-      <TouchableOpacity onPress={() => handleCall(item.phone)} style={styles.callButton}>
-        <Ionicons name="call" size={24} color="white" />
-        <Text style={styles.callButtonText}>Call</Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const renderContact = ({ item }: { item: { id: string; name: string; phone: string } }) => {
+    return (
+      <Animated.View style={styles.contactItem}>
+        <Text style={styles.contactName}>{item.name}</Text>
+        <TouchableOpacity onPress={() => handleCall(item.phone)} style={styles.callButton}>
+          <Ionicons name="call" size={20} color="white" />
+          <Text style={styles.callButtonText}>Call</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -48,11 +50,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#DEE5D4",
   },
   title: {
-    fontSize: 24,
+    marginTop: 35,
+    fontSize: 28,
     fontWeight: "bold",
+    color: "#8EACCD",
+    textAlign: "center",
     marginBottom: 20,
   },
   list: {
@@ -63,28 +68,37 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    marginBottom: 10,
+    backgroundColor: "#D2E0FB",
+    borderRadius: 12,
+    marginBottom: 12,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 3,
   },
   contactName: {
     fontSize: 18,
+    fontWeight: "500",
+    color: "#333",
   },
   callButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#007AFF",
-    padding: 10,
+    backgroundColor: "#8EACCD",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
     borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   callButtonText: {
     color: "white",
-    marginLeft: 5,
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
