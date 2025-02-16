@@ -14,8 +14,6 @@ verification = client.verify \
     .services('VAea5cf22f2a59e8d369b782f3557f8789') \
     .verifications \
     .create(to='+16476796931', channel='sms')
-
-
 print(verification.sid)
 
 
