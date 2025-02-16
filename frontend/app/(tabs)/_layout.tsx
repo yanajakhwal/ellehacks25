@@ -32,24 +32,35 @@ export default function TabLayout() {
         },
       }}
     >
-      {/* Clara Tab */}
+      {/* Family Tab */}
       <Tabs.Screen
-        name="clara"
+        name="Family"
         options={{
-          title: 'Clara',
+          title: 'Family',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.circle.fill" color={color} />
+            <IconSymbol size={28} name="person.3.fill" color={color} /> // Icon for family
           ),
         }}
       />
 
-      {/* Chatbot Tab */}
+      {/* Location Tab */}
+      <Tabs.Screen
+        name="geoscreen"
+        options={{
+          title: 'Location',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="location.fill" color={color} /> // Icon for location
+          ),
+        }}
+      />
+
+      {/* Clara Tab */}
       <Tabs.Screen
         name="chatbot"
         options={{
-          title: 'Chatbot',
+          title: 'Clara',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="wand.and.stars" color={color} />
+            <IconSymbol size={28} name="wand.and.stars" color={color} /> // Icon for Clara
           ),
         }}
       />
@@ -60,7 +71,7 @@ export default function TabLayout() {
         options={{
           title: 'Contacts',
           tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="person.2.fill" color={color} />
+            <IconSymbol size={28} name="person.2.fill" color={color} /> // Icon for contacts
           ),
         }}
       />
