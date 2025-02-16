@@ -12,6 +12,15 @@ auth_token = '5cda0eb1b7a3348d82935d941f3f0e32'
 client = Client(account_sid, auth_token)
 
 
+# range - this based off boolean variable name = isInRange 
+message = client.messages.create(
+    body="Patient is out of range",
+    from_="+12893019431",
+    to="+16476796931",
+)
+print(message.body)
+
+
 #make this based off of the user input - when they click login button
 verification = client.verify \
     .v2 \
@@ -25,17 +34,8 @@ verification_check = client.verify.v2.services(
 print(verification_check.status)
 
 #verifiying user input codes 
-#verification_check = client.verify.services('VAea5cf22f2a59e8d369b782f3557f8789').verification_checks.create(to='+16476796931', code='123456')
-#print(verification_check.status)
-
-
-# range - this based off boolean variable name = isInRange 
-message = client.messages.create(
-    body="Patient is out of range",
-    from_="+12893019431",
-    to="+16476796931",
-)
-print(message.body)
+verification_check = client.verify.services('VAea5cf22f2a59e8d369b782f3557f8789').verification_checks.create(to='+16476796931', code=newCode)
+print(verification_check.status)
 
 
 app = FastAPI()
@@ -91,6 +91,7 @@ async def receive_geofence_status(status: GeofenceStatus):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 
 
