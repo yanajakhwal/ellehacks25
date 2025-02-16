@@ -29,6 +29,14 @@ print(verification_check.status)
 #print(verification_check.status)
 
 
+# range - this based off boolean variable name = isInRange 
+message = client.messages.create(
+    body="Patient is out of range",
+    from_="+12893019431",
+    to="+16476796931",
+)
+print(message.body)
+
 
 app = FastAPI()
 
@@ -86,14 +94,7 @@ if __name__ == "__main__":
 
 
 
-# range - this based off boolean variable name = isInRange 
-if isInRange == False:
-    message = client.messages.create(
-       body="Patient is out of range",
-       from_="+12893019431",
-        to="+16476796931",
-    )
-print(message.body)
+
 
 
 
