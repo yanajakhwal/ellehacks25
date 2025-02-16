@@ -1,16 +1,42 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 
-
 const EmergencyContactsPage = () => {
   const contacts = [
-    { name: 'John Doe', phone: '123-456-7890' },
+    { name: 'Primary Caregiver', phone: '647-679-6931' },
     { name: 'Jane Smith', phone: '987-654-3210' },
     { name: 'Alice Johnson', phone: '555-0123-4567' },
     { name: 'Bob Wilson', phone: '444-000-3333' },
   ];
 
-}
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Emergency Contacts</Text>
+      </View>
+      <ScrollView style={styles.contactsContainer}>
+        {contacts.map((contact, index) => (
+          <View key={index} style={styles.contactItem}>
+            <Text style={styles.contactName}>{contact.name}</Text>
+            <Text style={styles.contactPhone}>{contact.phone}</Text>
+          </View>
+        ))}
+      </ScrollView>
+      <View style={styles.bottomNav}>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navText}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navText}>Contacts</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Text style={styles.navText}>Settings</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -22,10 +48,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
-  },
-  time: {
-    fontSize: 16,
-    color: '#666',
   },
   title: {
     fontSize: 24,
