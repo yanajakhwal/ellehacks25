@@ -20,13 +20,6 @@ export default function HomeScreen() {
     });
   }, [navigation]); // ✅ Dependency is navigation, not useNavigation
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/`)
-      .then((response) => setApiMessage(response.data.message))
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
   return (
     <ThemedView style={styles.welcome}>
       {/* Voice Button */}
