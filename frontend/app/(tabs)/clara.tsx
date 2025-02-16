@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { SafeAreaView, View, TouchableOpacity, Text, Animated, Platform, Dimensions } from 'react-native';
+import { SafeAreaView, View, TouchableOpacity, Text, Animated, Dimensions } from 'react-native';
 import { GiftedChat, Bubble, IMessage as GiftedChatMessage } from 'react-native-gifted-chat';
 import { useRouter, useNavigation } from 'expo-router';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -35,7 +35,6 @@ const ClaraChatScreen: React.FC = () => {
 
   useEffect(() => {
     navigation.setOptions({ 
-      tabBarStyle: { display: "none" },
       headerShown: false 
     });
     
@@ -217,27 +216,44 @@ const ClaraChatScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.white }}>
+      {/* Header with Back Button */}
       <View style={{
         backgroundColor: COLORS.secondary,
         paddingVertical: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: 'row', // Align items horizontally
+        alignItems: 'center', // Center items vertically
+        justifyContent: 'flex-start', // Align items to the left
         shadowColor: COLORS.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
       }}>
-        <Text style={{
-          fontSize: 24,
-          color: COLORS.white,
-          fontWeight: '500',
-          letterSpacing: 0.5,
-        }}>
-          Clara
-        </Text>
+        {/* Back Button */}
+        <TouchableOpacity
+          onPress={() => router.push('/')} // Navigate back to the homepage
+          style={{
+            marginLeft: 16, // Add some spacing from the left edge
+          }}
+        >
+          <Text style={{ fontSize: 24, color: COLORS.white }}>←</Text>
+        </TouchableOpacity>
+
+        {/* Title */}
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={{
+            fontSize: 24,
+            color: COLORS.white,
+            fontWeight: '500',
+            letterSpacing: 0.5,
+            marginLeft: -38, // Offset the title to the left
+          }}>
+            Clara
+          </Text>
+        </View>
       </View>
 
+      {/* Chat Interface */}
       <GiftedChat
         messages={messages}
         renderBubble={renderBubble}
