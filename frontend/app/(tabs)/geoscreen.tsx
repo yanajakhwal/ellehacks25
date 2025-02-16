@@ -1,4 +1,3 @@
-// filepath: /c:/Users/sarah/ELLE_PROJECT/ellehacks25/frontend/app/(tabs)/geoscreen.tsx
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
@@ -7,7 +6,7 @@ import axios from 'axios';
 
 const GeofenceScreen = () => {
   const [location, setLocation] = useState<any>(null);
-  const [previousLocation, setPreviousLocation] = useState<any>(null);  // Store previous location
+  const [previousLocation, setPreviousLocation] = useState<any>(null);
   const [region, setRegion] = useState({
     latitude: 43.7735,  // York University coordinates
     longitude: -79.5019,
@@ -16,16 +15,14 @@ const GeofenceScreen = () => {
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("Checking location...");
-  const [inRange, setInRange] = useState<boolean | null>(null); // New state variable
+  const [inRange, setInRange] = useState<boolean | null>(null);
 
-  // Define the geofence center and radius (range in meters)
   const geofence = {
     latitude: 43.7735,  // Geofence center (York University)
     longitude: -79.5019,  // Geofence center (York University)
     radius: 500,  // Geofence radius (range) in meters
   };
 
-  // Request location permissions and get current position
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -34,32 +31,28 @@ const GeofenceScreen = () => {
         return;
       }
 
-      // Watch for location updates continuously
       await Location.watchPositionAsync(
         { accuracy: Location.Accuracy.High, timeInterval: 1000, distanceInterval: 1 },
         (locationData) => {
-          // Compare new location with previous location
           if (
             previousLocation === null ||
             locationData.coords.latitude !== previousLocation.latitude ||
             locationData.coords.longitude !== previousLocation.longitude
           ) {
-            // Only update if location has changed
             setLocation(locationData.coords);
-            setPreviousLocation(locationData.coords);  // Save the new location as the previous location
+            setPreviousLocation(locationData.coords);
             setRegion({
               ...region,
               latitude: locationData.coords.latitude,
               longitude: locationData.coords.longitude,
             });
-            checkGeofence(locationData.coords);  // Check geofence whenever location updates
+            checkGeofence(locationData.coords);
           }
         }
       );
     })();
-  }, [previousLocation]);  // Dependency on previousLocation to compare
+  }, [previousLocation]);
 
-  // Haversine formula to calculate distance between two points
   const checkGeofence = (userLocation: any) => {
     if (userLocation) {
       const toRadians = (deg: number) => deg * (Math.PI / 180);
@@ -81,12 +74,10 @@ const GeofenceScreen = () => {
 
       const distance = R * c; // Distance in meters
 
-      // Update live status based on whether the user is inside or outside the geofence
       const isInRange = distance < geofence.radius;
       setStatus(isInRange ? "Inside Geofence" : "Outside Geofence");
       setInRange(isInRange);
 
-      // Send the status to the backend
       axios.post('http://localhost:8000/api/geofence', {
         inRange: isInRange,
         location: userLocation
@@ -102,29 +93,29 @@ const GeofenceScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.status}>{status}</Text>  {/* Live status on the top bar */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Geofence Status</Text>
+        <Text style={[styles.status, inRange !== null && (inRange ? styles.inRange : styles.outOfRange)]}>
+          {status}
+        </Text>
+      </View>
 
       {errorMsg ? (
-        <Text>{errorMsg}</Text>
+        <Text style={styles.errorText}>{errorMsg}</Text>
       ) : (
         <MapView
           style={styles.map}
-          region={region}  // Set region to the current location
+          region={region}
           onRegionChangeComplete={setRegion}
         >
-          {/* Geofence Circle */}
           <Circle
             center={geofence}
             radius={geofence.radius}
             strokeWidth={2}
-            strokeColor="rgba(255,0,0,0.5)"
-            fillColor="rgba(255,0,0,0.2)"
+            strokeColor="rgba(142, 172, 205, 0.8)" // 8EACCD with opacity
+            fillColor="rgba(142, 172, 205, 0.2)" // 8EACCD with opacity
           />
-
-          {/* Geofence Center Marker */}
-          <Marker coordinate={geofence} title="Geofence Center" pinColor="red" />
-
-          {/* User's Current Location Marker */}
+          <Marker coordinate={geofence} title="Geofence Center" pinColor="#8EACCD" />
           {location && (
             <Marker
               coordinate={{
@@ -132,7 +123,7 @@ const GeofenceScreen = () => {
                 longitude: location.longitude,
               }}
               title="Your Location"
-              pinColor="blue"
+              pinColor="#D2E0FB"
             />
           )}
         </MapView>
@@ -144,25 +135,46 @@ const GeofenceScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",  // Ensure the status is at the top
+    backgroundColor: "#DEE5D4", // Background color
+  },
+  header: {
+    backgroundColor: "#8EACCD", // Header background color
+    paddingVertical: 20,
+    paddingHorizontal: 16,
     alignItems: "center",
-    position: "relative",
+    borderBottomWidth: 1,
+    borderBottomColor: "#FEF9D9", // Accent color
+  },
+  headerText: {
+    fontSize: 24,
+    paddingTop: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF", // White text
   },
   status: {
-    position: "absolute",
-    top: 60,  // Adjust this value to move the status down a bit
     fontSize: 18,
-    fontWeight: "bold",
-    zIndex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Background to make text readable
-    padding: 10,
-    width: "100%",  // Ensures the status spans across the entire screen
-    textAlign: "center",  // Center the status text
+    fontWeight: "600",
+    marginTop: 8,
+    color: "#FFFFFF", // White text
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  inRange: {
+    backgroundColor: "#4CAF50", // Green for in-range status
+  },
+  outOfRange: {
+    backgroundColor: "#F44336", // Red for out-of-range status
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#F44336", // Red for errors
+    textAlign: "center",
+    marginTop: 20,
   },
   map: {
     width: "100%",
-    height: "100%",  // Ensure the map takes the full remaining height below the status
-    marginTop: 70,  // Added top margin to move map display down
+    height: "100%",
   },
 });
 
