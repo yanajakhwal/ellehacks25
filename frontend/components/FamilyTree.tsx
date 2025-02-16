@@ -75,44 +75,45 @@ const FamilyTree = () => {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>My Family Tree</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        <Svg height="500" width="1000">
+        <Svg height="500" width="600">
           {/* Parents */}
-          {renderFamilyNode("Mom", "250", 80)}
-          {renderFamilyNode("Dad", "450", 80)}
-          <Line x1="250" y1="120" x2="450" y2="120" stroke="#8EACCD" strokeWidth="2" />
-          <Line x1="350" y1="120" x2="350" y2="180" stroke="#8EACCD" strokeWidth="2" />
+          {renderFamilyNode("Mom", "305", 115)}
+          {renderFamilyNode("Dad", "95", 115)}
+          <Line x1="140" y1="115" x2="260" y2="115" stroke="#8EACCD" strokeWidth="2" />
+          <Line x1="200" y1="120" x2="200" y2="200" stroke="#8EACCD" strokeWidth="2" />
 
           {/* Me */}
-          {renderFamilyNode("Me", "350", 230, true)}
+          {renderFamilyNode("Me", "200", 220, true)}
 
           {/* Spouse */}
-          {renderFamilyNode("Spouse", "550", 230)}
-          <Line x1="400" y1="230" x2="510" y2="230" stroke="#8EACCD" strokeWidth="2" />
+          {renderFamilyNode("Spouse", "330", 220)}
+          <Line x1="255" y1="220" x2="285" y2="220" stroke="#8EACCD" strokeWidth="2" />
 
           {/* Child */}
-          <Line x1="350" y1="245" x2="350" y2="290" stroke="#8EACCD" strokeWidth="2" />
-          {renderFamilyNode("Child", "350", 340)}
+          {renderFamilyNode("Child-Spouse", "60", 345)}
+          <Line x1="110" y1="350" x2="155" y2="350" stroke="#8EACCD" strokeWidth="2" />
+
+          <Line x1="200" y1="240" x2="200" y2="300" stroke="#8EACCD" strokeWidth="2" />
+          {renderFamilyNode("Child", "200", 345)}
 
           {/* Grandchildren */}
           {familyMembers
-            .filter(member => member.parents.includes("Child"))
-            .map((member, index, array) => {
-              const baseX = 350 - (array.length - 1) * 50;
-              const x = baseX + index * 100;
-              return (
-                <React.Fragment key={index}>
-                  {renderFamilyNode(member.name, x.toString(), 450)}
-                  <Line
-                    x1="350"
-                    y1="380"
-                    x2={x}
-                    y2="410"
-                    stroke="#8EACCD"
-                    strokeWidth="2"
-                  />
-                </React.Fragment>
-              );
-            })}
+          .filter(member => member.parents.includes("Child"))
+          .map((member, index) => {
+            return (
+              <React.Fragment key={index}>
+                {renderFamilyNode(member.name, "132", 445)} 
+                <Line
+                  x1="132"
+                  y1="355"
+                  x2="132"
+                  y2="400"
+                  stroke="#8EACCD"
+                  strokeWidth="2"
+                />
+              </React.Fragment>
+            );
+          })}
         </Svg>
       </ScrollView>
 
@@ -196,22 +197,27 @@ const FamilyTree = () => {
 };
 
 const styles = StyleSheet.create({
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: "#DEE5D4",
+  //   padding: 20,
+  // },
   container: {
     flex: 1,
     backgroundColor: "#DEE5D4",
-    padding: 20,
+    paddingTop: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-    color: "#8EACCD",
+  scrollContainer: {
+    flexGrow: 1, // Allow scrolling if content is bigger than screen
+    paddingBottom: 100, // Space for new members so they don't overlap with button
   },
   addButton: {
+    position: "absolute", // Keep button fixed at bottom
+    bottom: 80, // Space from bottom
+    left: "10%",
+    right: "10%",
     backgroundColor: "#8EACCD",
     padding: 16,
-    margin: 20,
     borderRadius: 25,
     flexDirection: "row",
     justifyContent: "center",
@@ -221,6 +227,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    // marginTop:-50,
   },
   addButtonText: {
     color: "white",
@@ -229,6 +236,35 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 8,
   },
+  title: {
+    marginTop:30,
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: -40,
+    color: "#8EACCD",
+  },
+  // addButton: {
+  //   backgroundColor: "#8EACCD",
+  //   padding: 16,
+  //   margin: 20,
+  //   borderRadius: 25,
+  //   flexDirection: "row",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   shadowColor: "#000",
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.1,
+  //   shadowRadius: 4,
+  //   elevation: 3,
+  // },
+  // addButtonText: {
+  //   color: "white",
+  //   textAlign: "center",
+  //   fontSize: 18,
+  //   fontWeight: "bold",
+  //   marginLeft: 8,
+  // },
   parentOption: {
     padding: 15,
     marginVertical: 5,
@@ -280,7 +316,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: "85%",
     alignItems: "center",
-    maxHeight: "80%",
+    maxHeight: "100%",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -352,6 +388,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
   },
+  
 });
 
 export default FamilyTree;
