@@ -45,6 +45,13 @@ export default function TabLayout() {
         tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle.fill" color={color} />,
       }}
     />
+    <Tabs.Screen
+  name="chatbot"
+  options={{
+    title: 'Deepseek',
+    tabBarIcon: ({ color }) => <IconSymbol size={28} name="wand.and.stars" color={color} />,
+  }}
+/>
       <Tabs.Screen
         name="contacts"
         options={{

@@ -6,13 +6,16 @@ import axios from 'axios';
 import { MaterialIcons } from '@expo/vector-icons';
 import { API_URL } from '@/config';
 import { useNavigation } from 'expo-router';
+import { useRouter } from 'expo-router'; // ✅ Import useRouter
 
 export default function HomeScreen() {
   const [apiMessage, setApiMessage] = useState('');
   const navigation = useNavigation(); // ✅ Call the hook correctly
+  const router = useRouter(); // ✅ Initialize the router
 
   useEffect(() => {
     navigation.setOptions({
+      tabBarStyle: { display: "none" },
       headerShown: false, // ✅ Correct usage of setOptions
     });
   }, [navigation]); // ✅ Dependency is navigation, not useNavigation
@@ -38,7 +41,10 @@ export default function HomeScreen() {
       <Image source={require('@/assets/images/clara-logo.png')} style={styles.logo} />
 
       {/* Centered Button */}
-      <TouchableOpacity style={styles.button} onPress={() => alert('Button Pressed!')}>
+      <TouchableOpacity 
+        style={styles.button} 
+        onPress={() => router.push('/clara')} // ✅ Navigate to Clara.tsx
+      >
         <Text style={styles.buttonText}>Get Started With Clara</Text>
       </TouchableOpacity>
     </ThemedView>
