@@ -14,8 +14,12 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
+<<<<<<< HEAD
     return {"message": "Hello fro Saryus!"}
 
 
 
 
+=======
+    return {"message": "Hello "}
+>>>>>>> 8c8f3694d4b98bf4a660d2936c96f674ffe71329
