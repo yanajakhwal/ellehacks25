@@ -1,38 +1,45 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React from "react";
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Linking, Platform } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-const EmergencyContactsPage = () => {
-  const contacts = [
-    { name: 'Primary Caregiver', phone: '647-679-6931' },
-    { name: 'Jane Smith', phone: '987-654-3210' },
-    { name: 'Alice Johnson', phone: '555-0123-4567' },
-    { name: 'Bob Wilson', phone: '444-000-3333' },
-  ];
+const emergencyContacts = [
+  { id: "1", name: "Primary Caregiver", phone: "647-679-6931" },
+  { id: "2", name: "Jane Smith", phone: "987-654-3210" },
+  { id: "3", name: "Alice Johnson", phone: "555-0123-4567" },
+  { id: "4", name: "Bob Wilson", phone: "444-000-3333" },
+];
+
+const Contacts = () => {
+  const handleCall = (phoneNumber: string) => {
+    let phoneUrl = Platform.OS === "ios" ? `telprompt:${phoneNumber}` : `tel:${phoneNumber}`;
+    Linking.canOpenURL(phoneUrl)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(phoneUrl);
+        }
+      })
+      .catch((err) => console.error("Error making phone call:", err));
+  };
+
+  const renderContact = ({ item }: { item: { id: string; name: string; phone: string } }) => (
+    <View style={styles.contactItem}>
+      <Text style={styles.contactName}>{item.name}</Text>
+      <TouchableOpacity onPress={() => handleCall(item.phone)} style={styles.callButton}>
+        <Ionicons name="call" size={24} color="white" />
+        <Text style={styles.callButtonText}>Call</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Emergency Contacts</Text>
-      </View>
-      <ScrollView style={styles.contactsContainer}>
-        {contacts.map((contact, index) => (
-          <View key={index} style={styles.contactItem}>
-            <Text style={styles.contactName}>{contact.name}</Text>
-            <Text style={styles.contactPhone}>{contact.phone}</Text>
-          </View>
-        ))}
-      </ScrollView>
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navText}>Contacts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={styles.navText}>Settings</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.title}>Emergency Contacts</Text>
+      <FlatList
+        data={emergencyContacts}
+        renderItem={renderContact}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+      />
     </View>
   );
 };
@@ -40,53 +47,45 @@ const EmergencyContactsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    paddingTop: 50,
-    paddingBottom: 20,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    padding: 20,
+    backgroundColor: "#f8f8f8",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 10,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
-  contactsContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  list: {
+    flexGrow: 1,
   },
   contactItem: {
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 15,
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
   },
   contactName: {
     fontSize: 18,
-    fontWeight: 'bold',
   },
-  contactPhone: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 5,
+  callButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#007AFF",
+    padding: 10,
+    borderRadius: 8,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 15,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-  },
-  navItem: {
-    alignItems: 'center',
-  },
-  navText: {
-    fontSize: 16,
-    color: '#333',
+  callButtonText: {
+    color: "white",
+    marginLeft: 5,
   },
 });
 
-export default EmergencyContactsPage;
+export default Contacts;
