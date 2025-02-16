@@ -1,9 +1,13 @@
 {
   "dependencies": {
     "expo": "^52.0.35",
+    "expo-location": "^18.0.6",
     "react-native-background-geolocation": "^4.18.5",
     "react-native-gifted-chat": "^2.6.5",
     "react-native-maps": "^1.20.1",
     "react-native-permissions": "^5.2.5"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
   }
 }
