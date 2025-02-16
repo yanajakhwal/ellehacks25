@@ -1,13 +1,13 @@
-// filepath: /c:/Users/sarah/ELLE_PROJECT/ellehacks25/frontend/app/(tabs)/geoscreen.tsx
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker, Circle } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from 'axios';
+import { API_URL } from '@/config';
 
 const GeofenceScreen = () => {
   const [location, setLocation] = useState<any>(null);
-  const [previousLocation, setPreviousLocation] = useState<any>(null);  // Store previous location
+  const [previousLocation, setPreviousLocation] = useState<any>(null);
   const [region, setRegion] = useState({
     latitude: 43.7735,  // York University coordinates
     longitude: -79.5019,
@@ -16,16 +16,14 @@ const GeofenceScreen = () => {
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [status, setStatus] = useState<string>("Checking location...");
-  const [inRange, setInRange] = useState<boolean | null>(null); // New state variable
+  const [inRange, setInRange] = useState<boolean | null>(null);
 
-  // Define the geofence center and radius (range in meters)
   const geofence = {
     latitude: 43.7735,  // Geofence center (York University)
     longitude: -79.5019,  // Geofence center (York University)
     radius: 500,  // Geofence radius (range) in meters
   };
 
-  // Request location permissions and get current position
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -34,32 +32,28 @@ const GeofenceScreen = () => {
         return;
       }
 
-      // Watch for location updates continuously
       await Location.watchPositionAsync(
-        { accuracy: Location.Accuracy.High, timeInterval: 1000, distanceInterval: 1 },
+        { accuracy: Location.Accuracy.High, timeInterval: 60000, distanceInterval: 100 },
         (locationData) => {
-          // Compare new location with previous location
           if (
             previousLocation === null ||
             locationData.coords.latitude !== previousLocation.latitude ||
             locationData.coords.longitude !== previousLocation.longitude
           ) {
-            // Only update if location has changed
             setLocation(locationData.coords);
-            setPreviousLocation(locationData.coords);  // Save the new location as the previous location
+            setPreviousLocation(locationData.coords);
             setRegion({
               ...region,
               latitude: locationData.coords.latitude,
               longitude: locationData.coords.longitude,
             });
-            checkGeofence(locationData.coords);  // Check geofence whenever location updates
+            checkGeofence(locationData.coords);
           }
         }
       );
     })();
-  }, [previousLocation]);  // Dependency on previousLocation to compare
+  }, [previousLocation]);
 
-  // Haversine formula to calculate distance between two points
   const checkGeofence = (userLocation: any) => {
     if (userLocation) {
       const toRadians = (deg: number) => deg * (Math.PI / 180);
@@ -81,15 +75,40 @@ const GeofenceScreen = () => {
 
       const distance = R * c; // Distance in meters
 
-      // Update live status based on whether the user is inside or outside the geofence
       const isInRange = distance < geofence.radius;
-      setStatus(isInRange ? "Inside Geofence" : "Outside Geofence");
-      setInRange(isInRange);
+      updateGeofenceStatus(isInRange, userLocation);
+    }
+  };
 
-      // Send the status to the backend
-      axios.post('http://localhost:8000/api/geofence', {
+  const updateGeofenceStatus = (isInRange: boolean, location: any) => {
+    setStatus(isInRange ? "Inside Geofence" : "Outside Geofence");
+    setInRange(isInRange);
+
+    // Only call API when user is NOT in range
+    if (!isInRange) {
+      axios.post(`${API_URL}/geofence`, {
         inRange: isInRange,
-        location: userLocation
+        location: location
+      })
+      .then(response => {
+        console.log('Status sent to backend:', response.data);
+      })
+      .catch(error => {
+        console.error('Error sending status to backend:', error);
+      });
+    }
+  };
+
+  const handleTestToggle = () => {
+    const newInRange = !inRange;
+    setInRange(newInRange);
+    setStatus(newInRange ? "Inside Geofence" : "Outside Geofence");
+    
+    // Only call API when toggling to NOT in range
+    if (!newInRange && location) {
+      axios.post(`${API_URL}/geofence`, {
+        inRange: newInRange,
+        location: location
       })
       .then(response => {
         console.log('Status sent to backend:', response.data);
@@ -102,29 +121,36 @@ const GeofenceScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.status}>{status}</Text>  {/* Live status on the top bar */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Geofence Status</Text>
+        <Text style={[styles.status, inRange !== null && (inRange ? styles.inRange : styles.outOfRange)]}>
+          {status}
+        </Text>
+      </View>
+
+      <TouchableOpacity 
+        style={styles.testButton} 
+        onPress={handleTestToggle}
+      >
+        <Text style={styles.testButtonText}>Toggle Status (Test)</Text>
+      </TouchableOpacity>
 
       {errorMsg ? (
-        <Text>{errorMsg}</Text>
+        <Text style={styles.errorText}>{errorMsg}</Text>
       ) : (
         <MapView
           style={styles.map}
-          region={region}  // Set region to the current location
+          region={region}
           onRegionChangeComplete={setRegion}
         >
-          {/* Geofence Circle */}
           <Circle
             center={geofence}
             radius={geofence.radius}
             strokeWidth={2}
-            strokeColor="rgba(255,0,0,0.5)"
-            fillColor="rgba(255,0,0,0.2)"
+            strokeColor="rgba(142, 172, 205, 0.8)"
+            fillColor="rgba(142, 172, 205, 0.2)"
           />
-
-          {/* Geofence Center Marker */}
-          <Marker coordinate={geofence} title="Geofence Center" pinColor="red" />
-
-          {/* User's Current Location Marker */}
+          <Marker coordinate={geofence} title="Geofence Center" pinColor="#8EACCD" />
           {location && (
             <Marker
               coordinate={{
@@ -132,7 +158,7 @@ const GeofenceScreen = () => {
                 longitude: location.longitude,
               }}
               title="Your Location"
-              pinColor="blue"
+              pinColor="#D2E0FB"
             />
           )}
         </MapView>
@@ -144,25 +170,66 @@ const GeofenceScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",  // Ensure the status is at the top
+    backgroundColor: "#DEE5D4",
+  },
+  header: {
+    backgroundColor: "#8EACCD",
+    paddingVertical: 20,
+    paddingHorizontal: 16,
     alignItems: "center",
-    position: "relative",
+    borderBottomWidth: 1,
+    borderBottomColor: "#FEF9D9",
+  },
+  headerText: {
+    fontSize: 24,
+    paddingTop: 22,
+    fontWeight: "bold",
+    color: "#FFFFFF",
   },
   status: {
-    position: "absolute",
-    top: 60,  // Adjust this value to move the status down a bit
     fontSize: 18,
-    fontWeight: "bold",
-    zIndex: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Background to make text readable
-    padding: 10,
-    width: "100%",  // Ensures the status spans across the entire screen
-    textAlign: "center",  // Center the status text
+    fontWeight: "600",
+    marginTop: 8,
+    color: "#FFFFFF",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  inRange: {
+    backgroundColor: "#4CAF50",
+  },
+  outOfRange: {
+    backgroundColor: "#F44336",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#F44336",
+    textAlign: "center",
+    marginTop: 20,
   },
   map: {
     width: "100%",
-    height: "100%",  // Ensure the map takes the full remaining height below the status
-    marginTop: 70,  // Added top margin to move map display down
+    height: "100%",
+  },
+  testButton: {
+    position: 'absolute',
+    right: 16,
+    top: 150,
+    backgroundColor: '#8EACCD',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    zIndex: 1,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  testButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
 

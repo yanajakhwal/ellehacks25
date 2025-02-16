@@ -11,54 +11,70 @@ export default function TabLayout() {
 
   return (
     <Tabs
-    screenOptions={{
-      tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-      headerShown: false,
-      tabBarButton: HapticTab,
-      tabBarBackground: TabBarBackground,
-      tabBarStyle: Platform.select({
-        ios: {
-          // Use a transparent background on iOS to show the blur effect
-          position: 'absolute',
+      screenOptions={{
+        tabBarActiveTintColor: '#8EACCD', // Active tab color
+        tabBarInactiveTintColor: '#D2E0FB', // Inactive tab color
+        headerShown: false,
+        tabBarButton: HapticTab,
+        tabBarBackground: () => <TabBarBackground />,
+        tabBarStyle: {
+          backgroundColor: '#DEE5D4', // Tab bar background color
+          borderTopWidth: 0, // Remove the top border
+          elevation: 0, // Remove shadow on Android
+          ...Platform.select({
+            ios: {
+              position: 'absolute',
+              borderTopLeftRadius: 20, // Rounded corners for iOS
+              borderTopRightRadius: 20,
+            },
+            default: {},
+          }),
         },
-        default: {},
-      }),
-    }}>
-    <Tabs.Screen
-      name="index"
-      options={{
-        title: 'Home',
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
       }}
-    />
-    <Tabs.Screen
-      name="explore"
-      options={{
-        title: 'Explore',
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-      }}
-    />
-    <Tabs.Screen
-      name="clara"
-      options={{
-        title: 'Clara',
-        tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle.fill" color={color} />,
-      }}
-    />
-    <Tabs.Screen
-  name="chatbot"
-  options={{
-    title: 'Deepseek',
-    tabBarIcon: ({ color }) => <IconSymbol size={28} name="wand.and.stars" color={color} />,
-  }}
-/>
+    >
+      {/* Family Tab */}
+      <Tabs.Screen
+        name="Family"
+        options={{
+          title: 'Family',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person.3.fill" color={color} /> // Icon for family
+          ),
+        }}
+      />
+
+      {/* Location Tab */}
+      <Tabs.Screen
+        name="geoscreen"
+        options={{
+          title: 'Location',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="location.fill" color={color} /> // Icon for location
+          ),
+        }}
+      />
+
+      {/* Clara Tab */}
+      <Tabs.Screen
+        name="chatbot"
+        options={{
+          title: 'Clara',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="wand.and.stars" color={color} /> // Icon for Clara
+          ),
+        }}
+      />
+
+      {/* Contacts Tab */}
       <Tabs.Screen
         name="contacts"
         options={{
-          title: 'contacts',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Contacts',
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person.2.fill" color={color} /> // Icon for contacts
+          ),
         }}
       />
-  </Tabs>
+    </Tabs>
   );
 }
